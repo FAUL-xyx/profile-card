@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Dashboard — Digital Business Card</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- ================= PIN GATE ================= -->
+  <div class="gate" id="gate">
+    <div class="gate__card">
+      <span class="gate__mark">◆</span>
+      <h1>Editor Access</h1>
+      <p id="gateSubtitle">Buat PIN 4-6 digit untuk melindungi dashboard ini.</p>
+      <input class="gate__input" id="gateInput" type="password" inputmode="numeric" maxlength="6" placeholder="••••••" autofocus>
+      <button class="btn btn--primary" id="gateBtn" style="width:100%">Continue</button>
+      <p class="gate__error" id="gateError"></p>
+      <p class="gate__hint">Prototype ini menyimpan PIN secara lokal di browser Anda saja (bukan sistem autentikasi produksi — lihat README).</p>
+    </div>
+  </div>
+
+  <!-- ================= DASHBOARD ================= -->
+  <div class="admin" id="adminRoot" hidden>
+
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <span class="brand__mark">◆</span>
+        <span>Digital Card</span>
+      </div>
+      <nav class="sidebar__nav">
+        <button class="nav-item is-active" data-panel="dashboard">Dashboard</button>
+        <button class="nav-item" data-panel="profile">Profile</button>
+        <button class="nav-item" data-panel="links">Links</button>
+        <button class="nav-item" data-panel="gaming">Gaming</button>
+        <button class="nav-item" data-panel="appearance">Appearance</button>
+        <button class="nav-item" data-panel="analytics">Analytics</button>
+        <button class="nav-item" data-panel="settings">Settings</button>
+      </nav>
+      <a class="sidebar__view" href="index.html" target="_blank">View live card ↗</a>
+      <button class="sidebar__lock" id="lockBtn">Lock dashboard</button>
+    </aside>
+
+    <div class="admin__layout">
+      <main class="admin__editor">
+
+        <!-- ---------- Dashboard ---------- -->
+        <section class="panel is-active" data-panel="dashboard">
+          <h2 class="panel__title">Overview</h2>
+          <p class="panel__subtitle">Ringkasan cepat kartu digital Anda.</p>
+          <div class="stat-grid">
+            <div class="stat-card"><span class="stat-card__num" id="statViews">0</span><span class="stat-card__label">Profile views</span></div>
+            <div class="stat-card"><span class="stat-card__num" id="statClicks">0</span><span class="stat-card__label">Total link clicks</span></div>
+            <div class="stat-card"><span class="stat-card__num" id="statLinks">0</span><span class="stat-card__label">Active links</span></div>
+            <div class="stat-card"><span class="stat-card__num" id="statShares">0</span><span class="stat-card__label">Shares</span></div>
+          </div>
+          <div class="quick-actions">
+            <button class="quick-action" data-goto="profile">Edit profile details →</button>
+            <button class="quick-action" data-goto="links">Manage links →</button>
+            <button class="quick-action" data-goto="appearance">Change theme →</button>
+          </div>
+        </section>
+
+        <!-- ---------- Profile ---------- -->
+        <section class="panel" data-panel="profile">
+          <h2 class="panel__title">Profile</h2>
+          <p class="panel__subtitle">Informasi ini tampil di kartu utama.</p>
+
+          <div class="field-grid">
+            <label class="field"><span>Nama</span><input type="text" id="f_name"></label>
+            <label class="field"><span>Username</span><input type="text" id="f_username" placeholder="tanpa @, dipakai untuk URL"></label>
+            <label class="field field--full"><span>Jabatan / Deskripsi singkat</span><input type="text" id="f_title"></label>
+            <label class="field field--full"><span>Bio</span><textarea id="f_bio" rows="3"></textarea></label>
+            <label class="field"><span>Foto profil (URL gambar)</span><input type="text" id="f_avatar" placeholder="https://…"></label>
+            <label class="field"><span>Logo (URL gambar, opsional)</span><input type="text" id="f_logo" placeholder="https://…"></label>
+            <label class="field"><span>Email</span><input type="email" id="f_email"></label>
+            <label class="field"><span>Nomor WhatsApp</span><input type="text" id="f_whatsapp" placeholder="+62 812 3456 7890"></label>
+            <label class="field">
+              <span>Status</span>
+              <select id="f_status">
+                <option value="available">Available</option>
+                <option value="busy">Busy</option>
+                <option value="offline">Offline</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <!-- ---------- Links (social + custom) ---------- -->
+        <section class="panel" data-panel="links">
+          <div class="panel__head-row">
+            <div>
+              <h2 class="panel__title">Links</h2>
+              <p class="panel__subtitle">Tambah, edit, hapus, aktifkan/nonaktifkan, dan seret untuk mengubah urutan.</p>
+            </div>
+            <button class="btn btn--primary" id="addLinkBtn">+ Add Link</button>
+          </div>
+          <ul class="sortable-list" id="linksList"></ul>
+        </section>
+
+        <!-- ---------- Gaming ---------- -->
+        <section class="panel" data-panel="gaming">
+          <div class="panel__head-row">
+            <div>
+              <h2 class="panel__title">Gaming</h2>
+              <p class="panel__subtitle">Mobile Legends, Free Fire, Roblox, Steam, dan lainnya.</p>
+            </div>
+            <button class="btn btn--primary" id="addGameBtn">+ Add Game</button>
+          </div>
+          <ul class="sortable-list" id="gamesList"></ul>
+        </section>
+
+        <!-- ---------- Appearance ---------- -->
+        <section class="panel" data-panel="appearance">
+          <h2 class="panel__title">Appearance</h2>
+          <p class="panel__subtitle">Pilih preset atau sesuaikan sendiri nuansa kartu Anda.</p>
+
+          <div class="preset-grid" id="presetGrid"></div>
+
+          <div class="field-grid" style="margin-top:22px">
+            <label class="field"><span>Warna utama</span><input type="color" id="f_primary"></label>
+            <label class="field"><span>Warna aksen</span><input type="color" id="f_accent"></label>
+            <label class="field"><span>Warna background</span><input type="color" id="f_background"></label>
+            <label class="field">
+              <span>Border radius <em id="v_radius"></em></span>
+              <input type="range" id="f_radius" min="6" max="36" step="1">
+            </label>
+            <label class="field">
+              <span>Intensitas shadow <em id="v_shadow"></em></span>
+              <input type="range" id="f_shadow" min="10" max="100" step="5">
+            </label>
+            <label class="field">
+              <span>Intensitas efek 3D <em id="v_tilt"></em></span>
+              <input type="range" id="f_tilt" min="0" max="100" step="5">
+            </label>
+            <label class="field">
+              <span>Animasi</span>
+              <select id="f_animation">
+                <option value="full">Full</option>
+                <option value="reduced">Reduced</option>
+                <option value="off">Off</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <!-- ---------- Analytics ---------- -->
+        <section class="panel" data-panel="analytics">
+          <h2 class="panel__title">Analytics</h2>
+          <p class="panel__subtitle">Data sederhana berbasis localStorage (lihat README untuk migrasi backend).</p>
+          <div class="stat-grid">
+            <div class="stat-card"><span class="stat-card__num" id="a_views">0</span><span class="stat-card__label">Profile views</span></div>
+            <div class="stat-card"><span class="stat-card__num" id="a_shares">0</span><span class="stat-card__label">Shares</span></div>
+            <div class="stat-card"><span class="stat-card__num" id="a_clicks">0</span><span class="stat-card__label">Total clicks</span></div>
+          </div>
+          <h3 class="panel__section-title">Link paling banyak diklik</h3>
+          <ul class="analytics-list" id="analyticsList"></ul>
+        </section>
+
+        <!-- ---------- Settings ---------- -->
+        <section class="panel" data-panel="settings">
+          <h2 class="panel__title">Settings</h2>
+          <p class="panel__subtitle">Keamanan akun lokal &amp; data.</p>
+
+          <div class="settings-block">
+            <h3>Ubah PIN</h3>
+            <div class="field-grid">
+              <label class="field"><span>PIN baru</span><input type="password" id="s_newpin" maxlength="6" inputmode="numeric"></label>
+            </div>
+            <button class="btn btn--ghost" id="savePinBtn">Simpan PIN</button>
+          </div>
+
+          <div class="settings-block">
+            <h3>Data</h3>
+            <div class="settings-row">
+              <button class="btn btn--ghost" id="exportBtn">Export JSON</button>
+              <label class="btn btn--ghost file-btn">Import JSON<input type="file" id="importInput" accept="application/json" hidden></label>
+            </div>
+          </div>
+
+          <div class="settings-block settings-block--danger">
+            <h3>Danger zone</h3>
+            <p>Mengembalikan semua data ke contoh bawaan. Tindakan ini tidak bisa dibatalkan.</p>
+            <button class="btn btn--danger" id="resetBtn">Reset ke default</button>
+          </div>
+        </section>
+
+      </main>
+
+      <aside class="admin__preview">
+        <div class="preview__head">
+          <span>Live Preview</span>
+          <a href="index.html" target="_blank">Open ↗</a>
+        </div>
+        <div class="preview__frame-wrap">
+          <iframe id="previewFrame" src="index.html" title="Live preview"></iframe>
+        </div>
+      </aside>
+    </div>
+
+    <!-- mobile preview toggle -->
+    <button class="mobile-preview-toggle" id="mobilePreviewToggle">Preview</button>
+  </div>
+
+  <!-- ================= Link / Game modal ================= -->
+  <div class="modal" id="linkModal">
+    <div class="modal__backdrop" data-close-linkmodal></div>
+    <div class="modal__panel modal__panel--form">
+      <div class="modal__head">
+        <h3 id="linkModalTitle">Add Link</h3>
+        <button class="icon-btn" data-close-linkmodal aria-label="Close">✕</button>
+      </div>
+      <div class="field-grid" id="linkModalFields"></div>
+      <div class="modal__actions">
+        <button class="btn btn--primary" id="saveLinkBtn">Save</button>
+        <button class="btn btn--ghost" id="deleteLinkBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/cards.js"></script>
+  <script src="js/editor.js"></script>
+</body>
+</html>
